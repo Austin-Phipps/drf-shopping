@@ -2,9 +2,10 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from shopping_list.api.serializers import ShoppingItemSerializer
-from shopping_list.models import ShoppingItem
+from shopping_list.api.serializers import ShoppingItemSerializer, ShoppingListSerializer
+from shopping_list.models import ShoppingItem, ShoppingList
 
 class ShoppingItemViewSet(ModelViewSet):
     queryset = ShoppingItem.objects.all()
@@ -26,3 +27,13 @@ class ShoppingItemViewSet(ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         return Response(status=status.HTTP_200_OK)
+
+
+class ListAddShoppingList(ListCreateAPIView):
+    queryset = ShoppingList.objects.all()
+    serializer_class = ShoppingListSerializer
+
+
+class ShoppingListDetail(RetrieveUpdateDestroyAPIView):
+    queryset = ShoppingList.objects.all()
+    serializer_class = ShoppingListSerializer
