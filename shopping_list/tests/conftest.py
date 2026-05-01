@@ -1,6 +1,16 @@
 import pytest
-from django.contrib.auth.models import User
+from shopping_list.models import User
+from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
+
+
+@pytest.fixture(autouse=True)
+def disable_throttling(settings):
+    settings.REST_FRAMEWORK = {
+        **settings.REST_FRAMEWORK,
+        'DEFAULT_THROTTLE_CLASSES': [],
+    }
 
 from shopping_list.models import ShoppingItem, ShoppingList
 
