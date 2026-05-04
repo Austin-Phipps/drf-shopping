@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'shopping_list',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -154,6 +155,15 @@ REST_FRAMEWORK = {
         "user_day": "10000/hour",
         "user_minute": "200/minute",
     },
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "my Awesome API",
+    "DESCRIPTION": "Multiple shopping lists to never forget anything anymore.",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
 }
 
 AUTH_USER_MODEL = "shopping_list.User"
