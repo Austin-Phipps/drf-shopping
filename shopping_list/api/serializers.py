@@ -1,29 +1,34 @@
-from shopping_list.models import User
 from rest_framework import serializers
-from shopping_list.models import ShoppingItem, ShoppingList
+
+from shopping_list.models import ShoppingItem, ShoppingList, User
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ["id", "username"]
+
 
 class ShoppingItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShoppingItem
-        fields = ['id', 'name', 'purchased', 'shopping_list']
+        fields = ["id", "name", "purchased", "shopping_list"]
 
-        read_only_fields = ('id', 'shopping_list')
+        read_only_fields = ("id", "shopping_list")
 
     def create(self, validated_data, **kwargs):
-        validated_data['shopping_list_id'] = self.context['request'].parser_context['kwargs']['pk']
+        validated_data["shopping_list_id"] = self.context["request"].parser_context[
+            "kwargs"
+        ]["pk"]
 
         if ShoppingList.objects.get(
-            id=self.context['request'].parser_context['kwargs']['pk']
-        ).shopping_items.filter(name=validated_data['name'], purchased=False):
-            raise serializers.ValidationError('This item is already on the list')
-        
+            id=self.context["request"].parser_context["kwargs"]["pk"]
+        ).shopping_items.filter(name=validated_data["name"], purchased=False):
+            raise serializers.ValidationError("This item is already on the list")
+
         return super(ShoppingItemSerializer, self).create(validated_data)
+
 
 class ShoppingListSerializer(serializers.ModelSerializer):
     shopping_items = ShoppingItemSerializer(many=True, read_only=True)
@@ -32,11 +37,15 @@ class ShoppingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShoppingList
-        fields = ['id', 'name', 'shopping_items', 'unpurchased_items', 'members']
+        fields = ["id", "name", "shopping_items", "unpurchased_items", "members"]
 
     def get_unpurchased_items(self, obj):
-        return [{'name': item.name} for item in obj.shopping_items.filter(purchased=False)[:3]]
-    
+        return [
+            {"name": item.name}
+            for item in obj.shopping_items.filter(purchased=False)[:3]
+        ]
+
+
 class AddMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingList
@@ -48,7 +57,8 @@ class AddMemberSerializer(serializers.ModelSerializer):
             instance.save()
 
         return instance
-    
+
+
 class RemoveMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingList
